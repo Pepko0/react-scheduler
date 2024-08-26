@@ -1,8 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import 'dhtmlx-scheduler';
 import 'dhtmlx-scheduler/codebase/dhtmlxscheduler.css';
+import 'dhtmlx-scheduler/codebase/locale/locale_pl'
 
 const scheduler = window.scheduler;
+
 
 export default class Scheduler extends Component {
     componentDidMount() {
