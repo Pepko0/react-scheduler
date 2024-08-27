@@ -20,7 +20,7 @@ export default class Scheduler extends Component {
             'next'
         ];
 
-        scheduler.init(this.schedulerContainer, new Date(2022, 10, 15));
+        scheduler.init(this.schedulerContainer, new Date());
         scheduler.clearAll();
         scheduler.parse(this.props.events);
 
