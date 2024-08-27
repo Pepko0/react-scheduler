@@ -13,6 +13,7 @@
     "cldr-data": "^36.0.2",
     "devextreme-intl": "^19.1.8",
     "dhtmlx-scheduler": "^5.3.9",
+    "firebase": "^10.13.0",
     "gh-pages": "^6.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
