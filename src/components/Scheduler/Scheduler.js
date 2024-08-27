@@ -41,16 +41,27 @@ export default class Scheduler extends Component {
         scheduler.parse(events);
     };
 
+    formatDate = (date) => {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+    };
+
     addEventToFirestore = async (event) => {
         try {
             const eventsCollection = collection(firestore, "events");
-            await addDoc(eventsCollection, {
-                start_date: event.start_date,
-                end_date: event.end_date,
+            const formattedEvent = {
+                start_date: this.formatDate(event.start_date),
+                end_date: this.formatDate(event.end_date),
                 text: event.text,
                 id: event.id,
-            });
-            console.log("Event added to Firestore:", event);
+            };
+            await addDoc(eventsCollection, formattedEvent);
+            console.log("Event added to Firestore:", formattedEvent);
         } catch (error) {
             console.error("Error adding event to Firestore:", error);
         }
