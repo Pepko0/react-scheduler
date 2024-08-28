@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import 'dhtmlx-scheduler';
 import 'dhtmlx-scheduler/codebase/dhtmlxscheduler.css';
 import 'dhtmlx-scheduler/codebase/locale/locale_pl';
-import { collection, addDoc, deleteDoc, doc, getDoc } from "firebase/firestore";
+import { collection, addDoc, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from '../../firebase';
 
 const scheduler = window.scheduler;
@@ -32,7 +32,11 @@ export default class Scheduler extends Component {
             this.deleteEventFromFirestore(id);
         });
 
-        console.log("Loaded events into scheduler:", scheduler.getEvents()); 
+        scheduler.attachEvent("onEventChanged", (id, ev) => {
+            this.updateEventInFirestore(id, ev);
+        });
+
+        console.log("Loaded events into scheduler:", scheduler.getEvents());
     }
 
     componentDidUpdate(prevProps) {
@@ -87,6 +91,21 @@ export default class Scheduler extends Component {
         } catch (error) {
             console.error("Error fetching event from Firestore:", error);
             return null;
+        }
+    };
+
+    updateEventInFirestore = async (id, event) => {
+        try {
+            const eventDoc = doc(firestore, "events", id);
+            const formattedEvent = {
+                start_date: this.formatDate(event.start_date),
+                end_date: this.formatDate(event.end_date),
+                text: event.text,
+            };
+            await updateDoc(eventDoc, formattedEvent);
+            console.log("Event updated in Firestore:", id);
+        } catch (error) {
+            console.error("Error updating event in Firestore:", error);
         }
     };
 
