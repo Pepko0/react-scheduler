@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import 'dhtmlx-scheduler';
 import 'dhtmlx-scheduler/codebase/dhtmlxscheduler.css';
 import 'dhtmlx-scheduler/codebase/locale/locale_pl';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { firestore } from '../../firebase';
 
 const scheduler = window.scheduler;
@@ -27,6 +27,12 @@ export default class Scheduler extends Component {
         scheduler.attachEvent("onEventAdded", (id, ev) => {
             this.addEventToFirestore(ev);
         });
+
+        scheduler.attachEvent("onEventDeleted", (id) => {
+            this.deleteEventFromFirestore(id);
+        });
+
+        console.log("Loaded events into scheduler:", scheduler.getEvents()); 
     }
 
     componentDidUpdate(prevProps) {
@@ -58,12 +64,46 @@ export default class Scheduler extends Component {
                 start_date: this.formatDate(event.start_date),
                 end_date: this.formatDate(event.end_date),
                 text: event.text,
-                id: event.id,
             };
-            await addDoc(eventsCollection, formattedEvent);
-            console.log("Event added to Firestore:", formattedEvent);
+            const docRef = await addDoc(eventsCollection, formattedEvent);
+            console.log("Generated ID from Firestore:", docRef.id);
+            scheduler.changeEventId(event.id, docRef.id);
+            event.id = docRef.id;
         } catch (error) {
             console.error("Error adding event to Firestore:", error);
+        }
+    };
+
+    getEventFromFirestore = async (id) => {
+        try {
+            const eventDoc = doc(firestore, "events", id);
+            const docSnap = await getDoc(eventDoc);
+            if (docSnap.exists()) {
+                return { id: docSnap.id, ...docSnap.data() };
+            } else {
+                console.log("No such document!");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching event from Firestore:", error);
+            return null;
+        }
+    };
+
+    deleteEventFromFirestore = async (id) => {
+        console.log("Attempting to delete event with ID:", id);
+        try {
+            const event = await this.getEventFromFirestore(id);
+            if (event) {
+                const eventDoc = doc(firestore, "events", id);
+                await deleteDoc(eventDoc);
+                console.log("Event deleted from Firestore:", id);
+                scheduler.deleteEvent(id);
+            } else {
+                console.log("Event with ID not found in Firestore:", id);
+            }
+        } catch (error) {
+            console.error("Error deleting event from Firestore:", error);
         }
     };
 
