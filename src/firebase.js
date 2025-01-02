@@ -2,12 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCY0TZxOmqYLffh25aAkuM9873zeRys5_w",
-  authDomain: "sampleapp-6f822.firebaseapp.com",
-  projectId: "sampleapp-6f822",
-  storageBucket: "sampleapp-6f822.appspot.com",
-  messagingSenderId: "97307136462",
-  appId: "1:97307136462:web:99cd04fb9bcd423aa19b9f"
+  apiKey: "AIzaSyDbyu0MMZWin4kgX6GAjxTrWrggrA8Gp6Q",
+  authDomain: "reactscheduler-fd75b.firebaseapp.com",
+  projectId: "reactscheduler-fd75b",
+  storageBucket: "reactscheduler-fd75b.firebasestorage.app",
+  messagingSenderId: "961780253476",
+  appId: "1:961780253476:web:e6f2b070969bec428629b1",
+  measurementId: "G-2LTHS0QM1W"
 };
 
 // Initialize Firebase
@@ -15,3 +16,5 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
 export { firestore };
+
+
